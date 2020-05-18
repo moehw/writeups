@@ -56,7 +56,7 @@ The computers of Intel architecture start their execution in real mode and from 
 
 So, the base of shellcode is `0x7fbd8a4` and we can note from register `cr0` that it is protected mode. But even if we back to real mode, we don't have desired interrupts (int13 could read from floppy), so it would be useless.
 
-Next we want to output the information on screen, we should print the flag in future. I started to enumerate VGA buffer addresess (like `0xB8000`, `0xA0000`) and dump it with `gdb` by `x/x10 <address>` command. The first one - `0xB8000` was right, we can see the greeting text there. Moreover, the format is: one byte of character color and then byte of character. Indeed, writing bytes from these offsets changes the picture.
+Next we want to output the information on screen, we should print the flag in future. I started to enumerate VGA buffer addresess (like `0xB8000`, `0xA0000`) and dump it with `gdb` by `x/x10 <address>` command. The first one - `0xB8000` was right, we can see the greeting text there. Moreover, the format is: one byte of character color and then byte of character. Indeed, writing bytes from this offset changes the picture.
 
 The environment for debugging a shellcode is ready, the next step is write code to read sectors from floppy. It uses ISA DMA and how to implement data transfer from it can't be discribed better than it discribed on the Internet. Try to read this [link](https://wiki.osdev.org/Floppy_Disk_Controller) or find implementations somewhere else. But just for the shellcode we can skip some moments like implementing IRQ6 handler, it would work anyway since device processing is fast enough and there is no need for synchronization.
 
@@ -69,7 +69,7 @@ In `floppy-dummy-flag.img` we can see that flag pattern takes place on offset `0
 ```
 offset = 0x4400
 sector_size = 0x200
-lba = 0x4400 / 0x200 = 34
+lba = offset / sector_size = 34
 ```
 
 And then running the `python local-run.py shellcode.bin` gives us a pattern of flag, the same as server gives the flag!
