@@ -72,6 +72,6 @@ sector_size = 0x200
 lba = 0x4400 / 0x200 = 34
 ```
 
-And than running the `python local-run.py shellcode.bin` gives us a pattern of flag, the same as server gives the flag!
+And then running the `python local-run.py shellcode.bin` gives us a pattern of flag, the same as server gives the flag!
 
 <img src="pic/flag.png">
