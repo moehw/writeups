@@ -45,12 +45,12 @@ So that helps us to understand if the program flow comes to our shellcode at all
 The next step is setting up the debugger. QEMU has own gdbserver and enables it by adding the `-s` in command line (in this case it will be on `localhost:1234`). Also we can add `-S` to stop the machine at the beginning. I used `gdb` as a debugger, but also there was opportunity use something else which can be connected to QEMU gdbserver.
 GDB assistants (like `gef`) aren't working, so we need write a small helper to watch the flow by ourselves. You can take my one from [here](gdb.py) and run it by typing `sourse gdb.py` in gdb console.
 
-[](pic/start.png)
+<img src="pic/start.png" width="450">
 
 The computer of Intel architecture starts their execution in real mode and from `0xffff0` address, where usually the `jmp` instruction is located (we can check it in `bios-template.bin` file by openning it in IDA), everything is OK. Typing `c` we will continue the execution and then get into our infinity loop.
 
-[](pic/greet.png)
-[](pic/start_shellcode.png)
+<img src="pic/greet.png" width="450">
+<img src="pic/start_shellcode.png" width="450">
 
 So, the base of shellcode is `0x7fbd8a4` and we can note from register `cr0` that it is protected mode. But even if we back to real mode, we don't have interrupts (int13 could read from floppy), so it would be useless.
 
@@ -72,4 +72,4 @@ lba = 0x4400 / 0x200 = 34
 
 And than running the `python local-run.py shellcode.bin` gives us a pattern of flag, the same as server gives the flag!
 
-[](pic/flag.png)
+<img src="pic/flag.png">
