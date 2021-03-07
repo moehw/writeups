@@ -37,12 +37,14 @@ In the archive we can find the following files:
 Unpack it near your future shellcode.
 
 First of all, let's write a small shellcode with infinity loop:
-```jmp $```
+```
+jmp $
+```
 And compile it with NASM:
 ```
 nasm -f bin shellcode.asm -o shellcode.bin
 ```
-So that helps us to understand if the program flow comes to our shellcode at all and at what address it is. Knowing the address we can set the breakpoint on it and debug the shellcode.
+So, that helps us to understand if the program flow comes to our shellcode at all and at what address it is. Knowing the address we can set the breakpoint on it and debug the shellcode.
 
 The next step is setting up the debugger. QEMU has own gdbserver and enables it by adding the `-s` in command line (in this case it will be on `localhost:1234`). Also we can add `-S` to stop the machine at the beginning. I used `gdb` as a debugger, but also there was opportunity use something else which can be connected to QEMU gdbserver.
 GDB assistants (like `gef`) aren't working, so we need write a small helper to watch the flow by ourselves. You can take my one from [here](gdb.py) and run it by typing `sourse gdb.py` in gdb console.
@@ -54,9 +56,9 @@ The computers of Intel architecture start their execution in real mode and from 
 <img src="pic/greet.png" width="450">
 <img src="pic/start_shellcode.png" width="450">
 
-So, the base of shellcode is `0x7fbd8a4` and we can note from register `cr0` that it is protected mode. But even if we back to real mode, we don't have desired interrupts (int13 could read from floppy), so it would be useless.
+So, the base of shellcode is `0x7fbd8a4` and we can note from register `cr0` that it is protected mode. But even if we back to real mode, we don't have desired interrupts (int13 could read from floppy), so it would be useless. There is a need to write a communication with a floppy in protected mode.
 
-Next we want to output the information on screen, we should print the flag in future. I started to enumerate VGA buffer addresess (like `0xB8000`, `0xA0000`) and dump it with `gdb` by `x/x10 <address>` command. The first one - `0xB8000` was right, we can see the greeting text there. Moreover, the format is: one byte of character color and then byte of character. Indeed, writing bytes from these offsets changes the picture.
+Next, we want to output the information on screen, we should print the flag in future. I started to enumerate VGA buffer addresess (like `0xB8000`, `0xA0000`) and dump it with `gdb` by `x/x10 <address>` command. The first one - `0xB8000` was right, we can see the greeting text there. Moreover, the format is: one byte of character color and then byte of character. Indeed, writing bytes from this offset changes the picture.
 
 The environment for debugging a shellcode is ready, the next step is write code to read sectors from floppy. It uses ISA DMA and how to implement data transfer from it can't be discribed better than it discribed on the Internet. Try to read this [link](https://wiki.osdev.org/Floppy_Disk_Controller) or find implementations somewhere else. But just for the shellcode we can skip some moments like implementing IRQ6 handler, it would work anyway since device processing is fast enough and there is no need for synchronization.
 
@@ -69,7 +71,7 @@ In `floppy-dummy-flag.img` we can see that flag pattern takes place on offset `0
 ```
 offset = 0x4400
 sector_size = 0x200
-lba = 0x4400 / 0x200 = 34
+lba = offset / sector_size = 34
 ```
 
 And then running the `python local-run.py shellcode.bin` gives us a pattern of flag, the same as server gives the flag!
