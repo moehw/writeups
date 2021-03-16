@@ -3,7 +3,7 @@
 
 **Category:** | **Solves:**  | **Points:**
 --- | --- | ---
-rev | < 10 | ?
+rev | 8 | 575
 
 **Description:** 
 >A brave warrior stands in front of the harshest enemy, a untouchable evil spirit who possesses his allies. Will they be able to overcome this enemy?
